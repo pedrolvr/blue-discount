@@ -1,0 +1,54 @@
+version: 2.1
+
+defaults: &defaults
+  docker:
+  - image: circleci/golang:1.14
+
+commands:
+  bootstrap:
+    description: "Bootstrap actions"
+    steps:
+      - checkout
+      - run:
+          name: get all dependencies
+          command: |
+            go get -v ./...
+            go get -u github.com/onsi/ginkgo/ginkgo
+            go get -u github.com/onsi/gomega/...
+
+jobs:
+  test:
+    <<: *defaults
+    steps:
+      - bootstrap
+      - run:
+          name: test everything
+          command: make test
+
+  build-and-push:
+    <<: *defaults
+    steps:
+      - bootstrap
+      - setup_remote_docker
+      - run:
+          name: build and push image
+          shell: /bin/bash
+          command: |
+            chmod +x ./deploy/build-push-image.sh
+            ./deploy/build-push-image.sh
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test
+      - build-and-push:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master
+
+
+
