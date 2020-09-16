@@ -1,7 +1,18 @@
 package main
 
-import "fmt"
+import (
+	"blue-discount/internal/app"
+	"fmt"
+	"log"
+)
 
 func main() {
-	fmt.Println("discount")
+	config, err := app.ReadConfig("app", "./config/")
+
+	if err != nil {
+		log.Fatalf("Config error: %s", err)
+	}
+
+	fmt.Println("config", config)
+	fmt.Println("discount service")
 }

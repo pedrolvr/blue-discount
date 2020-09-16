@@ -7,4 +7,13 @@ run:
 
 .PHONY: test
 test:
-	ginkgo -r -race -failFast -progress
+	ginkgo -r -race -failFast -progress -cover
+
+.PHONY: test-clear
+test-clear:
+	rm -rf ./coverage/*.*
+
+.PHONY: test-cov
+test-cov: test-clear
+	ginkgo -r -race -failFast -progress -cover -coverprofile=coverage.out -outputdir=./coverage/
+	go tool cover -html=./coverage/coverage.out
