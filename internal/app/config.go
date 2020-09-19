@@ -8,10 +8,19 @@ import (
 
 type Config struct {
 	Discount DiscountConfig
+	DB       DBConfig `mapstructure:"db"`
 }
 
 type DiscountConfig struct {
 	MaxApplied int32 `mapstructure:"max_applied"`
+}
+
+type DBConfig struct {
+	Host     string `mapstructure:"host"`
+	Port     int
+	Name     string
+	User     string
+	Password string
 }
 
 func ReadConfig(name, path string) (Config, error) {

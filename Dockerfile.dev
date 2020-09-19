@@ -1,0 +1,6 @@
+FROM alpine
+WORKDIR /app
+ADD config config
+ADD migrations migrations
+ADD build build
+ENTRYPOINT build/discount

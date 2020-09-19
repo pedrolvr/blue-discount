@@ -1,3 +1,9 @@
 discount:
   max_applied: 10 # percent
-
+  
+db:
+  host: localhost
+  port: 5432
+  name: discount
+  user: postgres
+  password: postgres

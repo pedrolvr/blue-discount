@@ -20,3 +20,8 @@ vendor/
 
 # Tools
 .vscode/
+
+# Tilt
+start.go
+build/
+tilt_modules/

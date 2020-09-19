@@ -17,6 +17,7 @@ var _ = Describe("config", func() {
 				It("should get a right config object", func() {
 					c, err := app.ReadConfig("app", configPath)
 					Ω(c.Discount.MaxApplied).Should(Equal(int32(10)))
+					Ω(c.DB.Host).Should(Equal("localhost"))
 					Ω(err).Should(BeNil())
 				})
 			})

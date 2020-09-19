@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: discount-db
+  namespace: dev
+spec:
+  selector:
+    matchLabels:
+      svc: discount
+      app: postgres
+  serviceName: discount-db
+  replicas: 1
+  template:
+    metadata:
+      namespace: dev
+      labels:
+        svc: discount
+        app: postgres
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: discount-db
+        image: postgres:11.1-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: discount
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: postgres
+        - name: PGDATA
+          value: /data/discount-db/data
+
+        volumeMounts:
+        - name: discount-db
+          mountPath: /data/discount-db
+  volumeClaimTemplates:
+  - metadata:
+      name: discount-db
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discount-db
+  namespace: dev
+spec:
+  ports:
+  - port: 5432
+  clusterIP: None
+  selector:
+    svc: discount
+    app: postgres
