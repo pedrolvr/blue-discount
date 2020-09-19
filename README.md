@@ -3,13 +3,13 @@
 
 The project uses the following packages and tools:
 
-[Docker](https://www.docker.com/)
-[Kubernetes](https://kubernetes.io/)
-[Tilt](https://tilt.dev/) (development)
-[Gingko](https://github.com/onsi/ginkgo) (BDD for Go)
-[Gomega](https://github.com/onsi/gomega)
-[Gorm](https://gorm.io/index.html)
-[Viper](https://github.com/spf13/viper)
+- [Docker](https://www.docker.com/)
+- [Kubernetes](https://kubernetes.io/)
+- [Tilt](https://tilt.dev/) (development)
+- [Gingko](https://github.com/onsi/ginkgo) (BDD for Go)
+- [Gomega](https://github.com/onsi/gomega)
+- [Gorm](https://gorm.io/index.html)
+- [Viper](https://github.com/spf13/viper)
 
 ## Running locally
 
