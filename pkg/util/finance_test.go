@@ -1,7 +1,7 @@
 package util_test
 
 import (
-	"blue-discount/internal/shared/util"
+	"blue-discount/pkg/util"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

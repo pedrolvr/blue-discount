@@ -1,7 +1,7 @@
 package util_test
 
 import (
-	"blue-discount/internal/shared/util"
+	"blue-discount/pkg/util"
 	"time"
 
 	. "github.com/onsi/ginkgo"

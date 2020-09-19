@@ -1,7 +1,7 @@
 package model
 
 import (
-	"blue-discount/internal/shared/util"
+	"blue-discount/pkg/util"
 )
 
 const (
