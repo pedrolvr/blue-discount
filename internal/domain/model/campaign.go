@@ -5,6 +5,10 @@ import "time"
 type Campaign struct {
 	Name      string     `json:"name"`
 	Percent   int32      `json:"percent"`
-	Enabled   bool       `json:"enabled"`
-	AppliedAt *time.Time `appliedAt:"id"`
+	Active    bool       `json:"active"`
+	AppliedAt *time.Time `json:"appliedAt"`
+}
+
+func (Campaign) TableName() string {
+	return "campaign"
 }

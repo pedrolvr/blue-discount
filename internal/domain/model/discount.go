@@ -26,7 +26,7 @@ func (m *Discount) Calculate(maxPercent int32, user User, product Product) {
 	var percentApplied int32
 
 	for _, c := range m.Campaigns {
-		if !c.Enabled {
+		if !c.Active {
 			return
 		}
 
@@ -74,7 +74,7 @@ type BirthdayDiscount struct {
 func (s *BirthdayDiscount) Apply(user User, product Product) int64 {
 	campaign := s.Campaign
 
-	if util.IsBirthday(user.BornAt) {
+	if user.BornAt != nil && util.IsBirthday(*user.BornAt) {
 		return util.DiscountInCents(product.Price, campaign.Percent)
 	}
 

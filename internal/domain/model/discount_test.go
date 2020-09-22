@@ -63,11 +63,13 @@ var _ = Describe("discount test", func() {
 			Context("and is user`s birthday", func() {
 				Context("and the campaign is not enabled", func() {
 					It("should get 0 of discount in cents", func() {
+						now := time.Now()
+
 						campaigns := []model.Campaign{
-							{Enabled: false},
+							{Active: false},
 						}
 
-						user := model.User{BornAt: time.Now()}
+						user := model.User{BornAt: &now}
 
 						discount := model.NewDiscount(campaigns)
 
@@ -78,15 +80,17 @@ var _ = Describe("discount test", func() {
 				})
 
 				It("should get 500 of discount in cents", func() {
+					now := time.Now()
+
 					campaigns := []model.Campaign{
 						{
 							Name:    model.BirthdayCampaignName,
 							Percent: birthdayPercent,
-							Enabled: true,
+							Active:  true,
 						},
 					}
 
-					user := model.User{BornAt: time.Now()}
+					user := model.User{BornAt: &now}
 
 					discount := model.NewDiscount(campaigns)
 
@@ -102,13 +106,13 @@ var _ = Describe("discount test", func() {
 						{
 							Name:    model.BirthdayCampaignName,
 							Percent: birthdayPercent,
-							Enabled: true,
+							Active:  true,
 						},
 					}
 
 					tomorrow := time.Now().Add(24 * time.Hour)
 
-					user := model.User{BornAt: tomorrow}
+					user := model.User{BornAt: &tomorrow}
 
 					discount := model.NewDiscount(campaigns)
 
@@ -127,7 +131,7 @@ var _ = Describe("discount test", func() {
 				Context("and the campaign is not enabled", func() {
 					It("should get 0 of discount in cents", func() {
 						campaigns := []model.Campaign{
-							{Enabled: false},
+							{Active: false},
 						}
 
 						discount := model.NewDiscount(campaigns)
@@ -147,7 +151,7 @@ var _ = Describe("discount test", func() {
 							Name:      model.BlackFridayCampaignName,
 							Percent:   blackFridayPercent,
 							AppliedAt: &now,
-							Enabled:   true,
+							Active:    true,
 						},
 					}
 
@@ -169,7 +173,7 @@ var _ = Describe("discount test", func() {
 							Name:      model.BlackFridayCampaignName,
 							Percent:   blackFridayPercent,
 							AppliedAt: &tomorrow,
-							Enabled:   true,
+							Active:    true,
 						},
 					}
 
@@ -195,16 +199,16 @@ var _ = Describe("discount test", func() {
 							Name:      model.BlackFridayCampaignName,
 							Percent:   blackFridayPercent,
 							AppliedAt: &now,
-							Enabled:   true,
+							Active:    true,
 						},
 						{
 							Name:    model.BirthdayCampaignName,
 							Percent: birthdayPercent,
-							Enabled: true,
+							Active:  true,
 						},
 					}
 
-					user := model.User{BornAt: time.Now()}
+					user := model.User{BornAt: &now}
 
 					discount := model.NewDiscount(campaigns)
 
@@ -225,16 +229,16 @@ var _ = Describe("discount test", func() {
 								Name:      model.BlackFridayCampaignName,
 								Percent:   blackFridayPercent,
 								AppliedAt: &now,
-								Enabled:   true,
+								Active:    true,
 							},
 							{
 								Name:    model.BirthdayCampaignName,
 								Percent: birthdayPercent,
-								Enabled: true,
+								Active:  true,
 							},
 						}
 
-						user := model.User{BornAt: time.Now()}
+						user := model.User{BornAt: &now}
 
 						discount := model.NewDiscount(campaigns)
 
@@ -254,8 +258,8 @@ var _ = Describe("discount test", func() {
 				It("should get 0 of discount in cents", func() {
 					campaigns := []model.Campaign{
 						{
-							Name:    "not-implemented-campaign",
-							Enabled: true,
+							Name:   "not-implemented-campaign",
+							Active: true,
 						},
 					}
 
@@ -274,7 +278,7 @@ var _ = Describe("discount test", func() {
 						{
 							Name:    model.BlackFridayCampaignName,
 							Percent: blackFridayPercent,
-							Enabled: true,
+							Active:  true,
 						},
 					}
 

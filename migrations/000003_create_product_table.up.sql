@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "product"(
+CREATE TABLE IF NOT EXISTS "product" (
   id uuid NOT NULL PRIMARY KEY,
   price INT NOT NULL
 );

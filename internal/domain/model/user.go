@@ -7,8 +7,8 @@ import (
 )
 
 type User struct {
-	ID     uuid.UUID `gorm:"type:uuid;primary_key;"`
-	BornAt time.Time `json:"bornAt"`
+	ID     uuid.UUID  `gorm:"type:uuid;primary_key;"`
+	BornAt *time.Time `json:"bornAt"`
 }
 
 func (User) TableName() string {
