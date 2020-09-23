@@ -18,6 +18,6 @@ func NewCampaignRepo(db *gorm.DB) model.CampaignRepo {
 
 func (r *CampaignRepo) FindByActive(active bool) ([]model.Campaign, error) {
 	var ms []model.Campaign
-	err := r.db.Where(`active = ?`, active).Find(&ms).Error
+	err := r.db.Where(`active = ?`, active).Order("order ASC").Find(&ms).Error
 	return ms, err
 }

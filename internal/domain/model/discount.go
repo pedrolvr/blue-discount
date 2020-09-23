@@ -36,17 +36,15 @@ func (m *Discount) Calculate(maxPercent int32, user User, product Product) {
 			return
 		}
 
-		percentApplied = percentApplied + c.Percent
+		if percentApplied < maxPercent {
+			value = value + strategy.Apply(user, product)
 
-		if percentApplied > maxPercent {
-			return
-		}
+			if value > 0 {
+				percentApplied = percentApplied + c.Percent
 
-		value = value + strategy.Apply(user, product)
-
-		if value > 0 {
-			m.Value = value
-			m.Percentage = percentApplied
+				m.Percentage = percentApplied
+				m.Value = value
+			}
 		}
 	}
 }
@@ -88,11 +86,7 @@ type OnDateDiscount struct {
 func (s *OnDateDiscount) Apply(user User, product Product) int64 {
 	campaign := s.Campaign
 
-	if campaign.AppliedAt == nil {
-		return 0
-	}
-
-	if util.DateIsToday(*campaign.AppliedAt) {
+	if campaign.AppliedAt != nil && util.DateIsToday(*campaign.AppliedAt) {
 		return util.DiscountInCents(product.Price, campaign.Percent)
 	}
 

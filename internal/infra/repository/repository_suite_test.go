@@ -18,6 +18,6 @@ func TestRepository(t *testing.T) {
 func connectWithDB(db *sql.DB) *gorm.DB {
 	dialector := postgres.New(postgres.Config{Conn: db})
 	dbConn, err := gorm.Open(dialector, &gorm.Config{})
-	Expect(err).ShouldNot(HaveOccurred())
+	Ω(err).ShouldNot(HaveOccurred())
 	return dbConn
 }

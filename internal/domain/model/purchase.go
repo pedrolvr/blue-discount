@@ -13,3 +13,7 @@ func NewPurchase(user User, product Product, discount Discount) Purchase {
 		Discount: discount,
 	}
 }
+
+func (m *Purchase) CalculateDiscount(maxPercent int32) {
+	m.Discount.Calculate(maxPercent, m.User, m.Product)
+}

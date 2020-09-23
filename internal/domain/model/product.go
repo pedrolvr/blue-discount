@@ -7,6 +7,13 @@ type Product struct {
 	Price int64     `json:"price"`
 }
 
+func NewProduct(ID uuid.UUID, price int64) Product {
+	return Product{
+		ID:    ID,
+		Price: price,
+	}
+}
+
 func (Product) TableName() string {
 	return "product"
 }

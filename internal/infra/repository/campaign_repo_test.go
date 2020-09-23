@@ -4,7 +4,6 @@ import (
 	"blue-discount/internal/domain/model"
 	"blue-discount/internal/infra/repository"
 	"database/sql"
-	"regexp"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	. "github.com/onsi/ginkgo"
@@ -20,25 +19,25 @@ var _ = Describe("campaign repo", func() {
 		var err error
 
 		db, mock, err = sqlmock.New()
-		Expect(err).ShouldNot(HaveOccurred())
+		Ω(err).ShouldNot(HaveOccurred())
 
 		repo = repository.NewCampaignRepo(connectWithDB(db))
 	})
 
 	AfterEach(func() {
 		err := mock.ExpectationsWereMet()
-		Expect(err).ShouldNot(HaveOccurred())
+		Ω(err).ShouldNot(HaveOccurred())
 	})
 
 	It("FindByActive()", func() {
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "campaign"`)).
+		mock.ExpectQuery(`SELECT (.+) FROM "campaign" (.+) ORDER BY order ASC`).
 			WillReturnRows(
 				sqlmock.NewRows([]string{"name"}).AddRow(model.BirthdayCampaignName),
 			)
 
 		rows, err := repo.FindByActive(true)
 
-		Expect(err).ShouldNot(HaveOccurred())
-		Expect(rows[0].Name).Should(Equal(model.BirthdayCampaignName))
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(rows[0].Name).Should(Equal(model.BirthdayCampaignName))
 	})
 })

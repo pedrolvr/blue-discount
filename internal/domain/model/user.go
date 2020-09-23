@@ -11,6 +11,13 @@ type User struct {
 	BornAt *time.Time `json:"bornAt"`
 }
 
+func NewUser(ID uuid.UUID, bornAt *time.Time) User {
+	return User{
+		ID:     ID,
+		BornAt: bornAt,
+	}
+}
+
 func (User) TableName() string {
 	return "user"
 }

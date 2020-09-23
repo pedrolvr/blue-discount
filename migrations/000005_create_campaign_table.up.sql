@@ -3,5 +3,6 @@ CREATE TABLE IF NOT EXISTS "campaign" (
   name VARCHAR(45) NOT NULL UNIQUE,
   percent INT NOT NULL,
   active BOOLEAN NOT NULL,
-  applied_at DATE
+  applied_at DATE,
+  priority INT
 );
