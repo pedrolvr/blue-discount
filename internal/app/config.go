@@ -13,7 +13,8 @@ type Config struct {
 }
 
 type ServiceConfig struct {
-	Port int32
+	HTTPPort int32 `mapstructure:"http_port"`
+	GRPCPort int32 `mapstructure:"grpc_port"`
 }
 
 type DiscountConfig struct {

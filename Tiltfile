@@ -42,5 +42,5 @@ docker_build_with_restart(
   ],
 )
 
-k8s_resource('discount-service', port_forwards=8000)
+k8s_resource('discount-service', port_forwards=[8000, 8083])
 k8s_resource('discount-db', port_forwards=5432)

@@ -14,5 +14,4 @@ type PurchaseDTO struct {
 	UserID    string
 	ProductID string
 	Discount  DiscountDTO
-	Err       error
 }

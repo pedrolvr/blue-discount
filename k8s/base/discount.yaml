@@ -29,6 +29,7 @@ spec:
         image: phenrigomes/blue-discount:0.1
         ports:
         - containerPort: 7777
+        - containerPort: 8083
         imagePullPolicy: Always
         envFrom:
         - configMapRef:
@@ -41,7 +42,11 @@ metadata:
 spec:
   ports:
   - port: 8000
+    name: grpc
     targetPort: 7777
+  - port: 8083
+    name: http
+    targetPort: 8083
   selector:
     svc: discount
     app: blue

@@ -3,6 +3,7 @@ package grpc_test
 import (
 	usecase_mocks "blue-discount/internal/app/usecase/mocks"
 	"blue-discount/internal/domain/model"
+	infra_error "blue-discount/internal/infra/error"
 	"blue-discount/internal/infra/repository"
 	grpc_interface "blue-discount/internal/interface/transport/grpc"
 	proto_v1 "blue-discount/proto/v1"
@@ -14,6 +15,8 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/golang/mock/gomock"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"
 
 	. "github.com/onsi/ginkgo"
@@ -72,7 +75,7 @@ func dialer(registerService func(*grpc.Server)) func(context.Context, string) (n
 func grpcClient(ctx context.Context, purchaseUsecaseMock *usecase_mocks.MockPurchaseUsecase) (*grpc.ClientConn, error) {
 	register := func(server *grpc.Server) {
 		proto_v1.RegisterDiscountServiceServer(server,
-			grpc_interface.NewDiscountServer(purchaseUsecaseMock))
+			grpc_interface.NewDiscountServer(purchaseUsecaseMock, infra_error.ErrorMiddleware()))
 	}
 
 	return grpc.DialContext(ctx, "", grpc.WithInsecure(),
@@ -143,7 +146,7 @@ var _ = Describe("discount grpc service", func() {
 
 			c := proto_v1.NewDiscountServiceClient(cc)
 
-			r, err := c.Calculate(
+			_, err = c.Calculate(
 				ctx,
 				&proto_v1.DiscountRequest{
 					UserId:    userID,
@@ -151,9 +154,12 @@ var _ = Describe("discount grpc service", func() {
 				},
 			)
 
-			Ω(err).ShouldNot(HaveOccurred())
-			Ω(r.Err.Reason).Should(Equal("internal error"))
-			Ω(r.Err.Code).Should(Equal(int32(500)))
+			Ω(err).Should(HaveOccurred())
+
+			e, ok := status.FromError(err)
+
+			Ω(ok).Should(Equal(true))
+			Ω(e.Code()).Should(Equal(codes.Internal))
 		})
 
 		It("should get error code 404", func() {
@@ -171,7 +177,7 @@ var _ = Describe("discount grpc service", func() {
 
 			c := proto_v1.NewDiscountServiceClient(cc)
 
-			r, err := c.Calculate(
+			_, err = c.Calculate(
 				ctx,
 				&proto_v1.DiscountRequest{
 					UserId:    userID,
@@ -179,9 +185,12 @@ var _ = Describe("discount grpc service", func() {
 				},
 			)
 
-			Ω(err).ShouldNot(HaveOccurred())
-			Ω(r.Err.Reason).Should(Equal("record not found"))
-			Ω(r.Err.Code).Should(Equal(int32(404)))
+			Ω(err).Should(HaveOccurred())
+
+			e, ok := status.FromError(err)
+
+			Ω(ok).Should(Equal(true))
+			Ω(e.Code()).Should(Equal(codes.NotFound))
 		})
 	})
 })

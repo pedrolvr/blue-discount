@@ -21,7 +21,6 @@ func MakeCalculateDiscountEndpoint(usc usecase.PurchaseUsecase) endpoint.Endpoin
 				Percent: purchase.Discount.Percent,
 				Value:   purchase.Discount.Value,
 			},
-			Err: err,
-		}, nil
+		}, err
 	}
 }

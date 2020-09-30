@@ -2,14 +2,13 @@ package grpc
 
 import (
 	"context"
-	"errors"
 
 	"blue-discount/internal/app/usecase"
-	"blue-discount/internal/infra/repository"
 	"blue-discount/internal/interface/dto"
 	"blue-discount/internal/interface/facade"
 	proto_v1 "blue-discount/proto/v1"
 
+	"github.com/go-kit/kit/endpoint"
 	grpctransport "github.com/go-kit/kit/transport/grpc"
 )
 
@@ -43,11 +42,6 @@ func encodeDiscountResponse(ctx context.Context, r interface{}) (interface{}, er
 		ProductId: d.ProductID,
 	}
 
-	if d.Err != nil {
-		res.Err = errorHandler(d.Err)
-		return res, nil
-	}
-
 	res.Discount = &proto_v1.Discount{
 		Value:   d.Discount.Value,
 		Percent: d.Discount.Percent,
@@ -56,25 +50,18 @@ func encodeDiscountResponse(ctx context.Context, r interface{}) (interface{}, er
 	return res, nil
 }
 
-func errorHandler(err error) *proto_v1.ErrorInfo {
-	errCode := 500
-	reason := "internal error"
+func NewDiscountServer(usc usecase.PurchaseUsecase, middlewares ...endpoint.Middleware) proto_v1.DiscountServiceServer {
+	var endpoint endpoint.Endpoint
 
-	if errors.Is(err, repository.ErrRowNotFound) {
-		errCode = 404
-		reason = err.Error()
+	endpoint = facade.MakeCalculateDiscountEndpoint(usc)
+
+	for _, m := range middlewares {
+		endpoint = m(endpoint)
 	}
 
-	return &proto_v1.ErrorInfo{
-		Reason: reason,
-		Code:   int32(errCode),
-	}
-}
-
-func NewDiscountServer(usc usecase.PurchaseUsecase) proto_v1.DiscountServiceServer {
 	return &DiscountHandler{
 		calculate: grpctransport.NewServer(
-			facade.MakeCalculateDiscountEndpoint(usc),
+			endpoint,
 			decodeDiscountRequest,
 			encodeDiscountResponse,
 		),

@@ -1,5 +1,6 @@
 service:
-  port: 7777
+  grpc_port: 7777
+  http_port: 8083
 
 discount:
   max_applied: 10 # percent
