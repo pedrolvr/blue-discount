@@ -25,9 +25,9 @@ var _ = Describe("purchase test", func() {
 					birthdayPercent, true, &now),
 			}
 
-			discount := model.NewDiscount(campaigns)
+			discountCalc := model.NewDiscountCalculator(campaigns)
 
-			purchase := model.NewPurchase(user, product, discount)
+			purchase := model.NewPurchase(user, product, discountCalc)
 
 			purchase.CalculateDiscount(maxDiscount)
 

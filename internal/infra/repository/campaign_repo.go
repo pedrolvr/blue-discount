@@ -2,6 +2,7 @@ package repository
 
 import (
 	"blue-discount/internal/domain/model"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +18,15 @@ func NewCampaignRepo(db *gorm.DB) model.CampaignRepo {
 }
 
 func (r *CampaignRepo) FindByActive(active bool) ([]model.Campaign, error) {
-	var ms []model.Campaign
-	err := r.db.Where(`active = ?`, active).Order("order ASC").Find(&ms).Error
-	return ms, err
+	var m []model.Campaign
+
+	err := r.db.Where(`active = ?`, active).
+		Order("priority ASC").
+		Find(&m).Error
+
+	if err != nil {
+		return m, fmt.Errorf("find by active: %w", err)
+	}
+
+	return m, nil
 }

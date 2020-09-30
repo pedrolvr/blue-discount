@@ -33,6 +33,7 @@ docker_build_with_restart(
     './build',
     './config',
     './migrations',
+    './proto'
   ],
   live_update=[
     sync('./build', '/app/build'),

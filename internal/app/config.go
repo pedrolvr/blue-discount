@@ -8,7 +8,12 @@ import (
 
 type Config struct {
 	Discount DiscountConfig
-	DB       DBConfig `mapstructure:"db"`
+	Service  ServiceConfig
+	DB       DBConfig
+}
+
+type ServiceConfig struct {
+	Port int32
 }
 
 type DiscountConfig struct {
@@ -16,7 +21,7 @@ type DiscountConfig struct {
 }
 
 type DBConfig struct {
-	Host     string `mapstructure:"host"`
+	Host     string
 	Port     int
 	Name     string
 	User     string
@@ -33,7 +38,7 @@ func ReadConfig(name, path string) (Config, error) {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		return c, fmt.Errorf("error config file: %w \n", err)
+		return c, fmt.Errorf("read config: %w \n", err)
 	}
 
 	err = viper.Unmarshal(&c)

@@ -50,7 +50,7 @@ func (u *PurchaseUsecaseImpl) Discount(userID, productID string) (model.Purchase
 		return purchase, fmt.Errorf(errMsg, err)
 	}
 
-	purchase = model.NewPurchase(user, product, model.NewDiscount(campaigns))
+	purchase = model.NewPurchase(user, product, model.NewDiscountCalculator(campaigns))
 	purchase.CalculateDiscount(u.discountConfig.MaxApplied)
 
 	return purchase, nil

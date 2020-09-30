@@ -2,7 +2,7 @@ package main
 
 import (
 	"blue-discount/internal/app"
-	"blue-discount/internal/interface/http"
+	"blue-discount/internal/interface/transport/grpc"
 	"blue-discount/pkg/db"
 	"blue-discount/tool"
 	"log"
@@ -48,5 +48,5 @@ func main() {
 		log.Fatalf("Migrations error: %s", err)
 	}
 
-	http.CreateServer()
+	grpc.Start(dbConn, config)
 }

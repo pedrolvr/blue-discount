@@ -28,7 +28,7 @@ spec:
       - name: discount-service
         image: phenrigomes/blue-discount:0.1
         ports:
-        - containerPort: 8000
+        - containerPort: 7777
         imagePullPolicy: Always
         envFrom:
         - configMapRef:
@@ -41,7 +41,7 @@ metadata:
 spec:
   ports:
   - port: 8000
-    targetPort: 8000
+    targetPort: 7777
   selector:
     svc: discount
     app: blue

@@ -15,7 +15,7 @@ func MigrationUp(db *sql.DB) error {
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 
 	if err != nil {
-		return fmt.Errorf("Use db for migrations: %w", err)
+		return fmt.Errorf("use db for migrations: %w", err)
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
@@ -23,14 +23,14 @@ func MigrationUp(db *sql.DB) error {
 		"postgres", driver)
 
 	if err != nil {
-		return fmt.Errorf("Read migrations: %w", err)
+		return fmt.Errorf("read migrations: %w", err)
 	}
 
 	if err := m.Up(); err != nil {
 		if errors.Is(err, migrate.ErrNoChange) {
 			return nil
 		}
-		return fmt.Errorf("Apply migrations: %w", err)
+		return fmt.Errorf("apply migrations: %w", err)
 	}
 
 	return nil

@@ -10,43 +10,58 @@ const (
 )
 
 type Discount struct {
-	Value      int64
-	Percentage int32
-	Campaigns  []Campaign `json:"-"`
+	Value   int64
+	Percent int32
 }
 
-func NewDiscount(campaigns []Campaign) Discount {
+func NewDiscount(v int64, perc int32) Discount {
 	return Discount{
+		Value:   v,
+		Percent: perc,
+	}
+}
+
+type DiscountCalculator struct {
+	Campaigns []Campaign `json:"-"`
+}
+
+func NewDiscountCalculator(campaigns []Campaign) DiscountCalculator {
+	return DiscountCalculator{
 		Campaigns: campaigns,
 	}
 }
 
-func (m *Discount) Calculate(maxPercent int32, user User, product Product) {
-	var value int64
-	var percentApplied int32
+func (m *DiscountCalculator) Calculate(maxPercent int32, user User, product Product) Discount {
+	var valueSum int64
+	var percentSum int32
+	var discount Discount
 
 	for _, c := range m.Campaigns {
 		if !c.Active {
-			return
+			return discount
 		}
 
 		strategy := DiscountStrategyFactory(c)
 
 		if strategy == nil {
-			return
+			continue
 		}
 
-		if percentApplied < maxPercent {
-			value = value + strategy.Apply(user, product)
+		valueSum = valueSum + strategy.Apply(user, product)
 
-			if value > 0 {
-				percentApplied = percentApplied + c.Percent
-
-				m.Percentage = percentApplied
-				m.Value = value
-			}
+		if valueSum > 0 {
+			percentSum = percentSum + c.Percent
 		}
+
+		if percentSum > maxPercent {
+			break
+		}
+
+		discount.Value = valueSum
+		discount.Percent = percentSum
 	}
+
+	return discount
 }
 
 func DiscountStrategyFactory(c Campaign) DiscountStrategy {

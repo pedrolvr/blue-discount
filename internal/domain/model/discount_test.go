@@ -85,9 +85,9 @@ var _ = Describe("discount test", func() {
 
 						user := model.NewUser(userUID, &now)
 
-						discount := model.NewDiscount(campaigns)
+						discountCalc := model.NewDiscountCalculator(campaigns)
 
-						discount.Calculate(maxDiscount, user, product)
+						discount := discountCalc.Calculate(maxDiscount, user, product)
 
 						Ω(discount.Value).Should(Equal(int64(0)))
 					})
@@ -100,9 +100,9 @@ var _ = Describe("discount test", func() {
 
 					user := model.NewUser(userUID, &now)
 
-					discount := model.NewDiscount(campaigns)
+					discountCalc := model.NewDiscountCalculator(campaigns)
 
-					discount.Calculate(maxDiscount, user, product)
+					discount := discountCalc.Calculate(maxDiscount, user, product)
 
 					Ω(discount.Value).Should(Equal(int64(500)))
 				})
@@ -116,12 +116,12 @@ var _ = Describe("discount test", func() {
 
 					user := model.NewUser(userUID, &tomorrow)
 
-					discount := model.NewDiscount(campaigns)
+					discountCalc := model.NewDiscountCalculator(campaigns)
 
-					discount.Calculate(maxDiscount, user, product)
+					discount := discountCalc.Calculate(maxDiscount, user, product)
 
 					Ω(discount.Value).Should(Equal(int64(0)))
-					Ω(discount.Percentage).Should(Equal(int32(0)))
+					Ω(discount.Percent).Should(Equal(int32(0)))
 				})
 			})
 		})
@@ -138,12 +138,12 @@ var _ = Describe("discount test", func() {
 							newBlackFridayCampaign(false, &now),
 						}
 
-						discount := model.NewDiscount(campaigns)
+						discountCalc := model.NewDiscountCalculator(campaigns)
 
-						discount.Calculate(maxDiscount, user, product)
+						discount := discountCalc.Calculate(maxDiscount, user, product)
 
 						Ω(discount.Value).Should(Equal(int64(0)))
-						Ω(discount.Percentage).Should(Equal(int32(0)))
+						Ω(discount.Percent).Should(Equal(int32(0)))
 					})
 				})
 
@@ -154,12 +154,12 @@ var _ = Describe("discount test", func() {
 						newBlackFridayCampaign(true, &now),
 					}
 
-					discount := model.NewDiscount(campaigns)
+					discountCalc := model.NewDiscountCalculator(campaigns)
 
-					discount.Calculate(maxDiscount, user, product)
+					discount := discountCalc.Calculate(maxDiscount, user, product)
 
 					Ω(discount.Value).Should(Equal(int64(1000)))
-					Ω(discount.Percentage).Should(Equal(blackFridayPercent))
+					Ω(discount.Percent).Should(Equal(blackFridayPercent))
 				})
 			})
 
@@ -171,12 +171,12 @@ var _ = Describe("discount test", func() {
 						newBlackFridayCampaign(true, &tomorrow),
 					}
 
-					discount := model.NewDiscount(campaigns)
+					discountCalc := model.NewDiscountCalculator(campaigns)
 
-					discount.Calculate(maxDiscount, user, product)
+					discount := discountCalc.Calculate(maxDiscount, user, product)
 
 					Ω(discount.Value).Should(Equal(int64(0)))
-					Ω(discount.Percentage).Should(Equal(int32(0)))
+					Ω(discount.Percent).Should(Equal(int32(0)))
 				})
 			})
 		})
@@ -184,21 +184,21 @@ var _ = Describe("discount test", func() {
 		Context("when product price is 10000", func() {
 			product := model.NewProduct(productUID, 10000)
 
-			Context("and is black friday and is user`s birthday", func() {
-				It("should get 1000 of discount in cents", func() {
+			Context("and is user`s birthday and is black friday ", func() {
+				It("should get 500 of discount in cents", func() {
 					campaigns := []model.Campaign{
-						newBlackFridayCampaign(true, &now),
 						newBirthdayCampaign(true),
+						newBlackFridayCampaign(true, &now),
 					}
 
 					user := model.NewUser(userUID, &now)
 
-					discount := model.NewDiscount(campaigns)
+					discountCalc := model.NewDiscountCalculator(campaigns)
 
-					discount.Calculate(maxDiscount, user, product)
+					discount := discountCalc.Calculate(maxDiscount, user, product)
 
-					Ω(discount.Value).Should(Equal(int64(1000)))
-					Ω(discount.Percentage).Should(Equal(blackFridayPercent))
+					Ω(discount.Value).Should(Equal(int64(500)))
+					Ω(discount.Percent).Should(Equal(birthdayPercent))
 				})
 
 				Context("and max discount is 15%", func() {
@@ -212,12 +212,50 @@ var _ = Describe("discount test", func() {
 
 						user := model.NewUser(userUID, &now)
 
-						discount := model.NewDiscount(campaigns)
+						discountCalc := model.NewDiscountCalculator(campaigns)
 
-						discount.Calculate(maxDiscountApplied, user, product)
+						discount := discountCalc.Calculate(maxDiscountApplied, user, product)
 
 						Ω(discount.Value).Should(Equal(int64(1500)))
-						Ω(discount.Percentage).Should(Equal(maxDiscountApplied))
+						Ω(discount.Percent).Should(Equal(maxDiscountApplied))
+					})
+				})
+			})
+
+			Context("and is black friday and is user`s birthday", func() {
+				It("should get 1000 of discount in cents", func() {
+					campaigns := []model.Campaign{
+						newBlackFridayCampaign(true, &now),
+						newBirthdayCampaign(true),
+					}
+
+					user := model.NewUser(userUID, &now)
+
+					discountCalc := model.NewDiscountCalculator(campaigns)
+
+					discount := discountCalc.Calculate(maxDiscount, user, product)
+
+					Ω(discount.Value).Should(Equal(int64(1000)))
+					Ω(discount.Percent).Should(Equal(blackFridayPercent))
+				})
+
+				Context("and max discount is 15%", func() {
+					It("should get 1500 of discount in cents", func() {
+						maxDiscountApplied := int32(15)
+
+						campaigns := []model.Campaign{
+							newBlackFridayCampaign(true, &now),
+							newBirthdayCampaign(true),
+						}
+
+						user := model.NewUser(userUID, &now)
+
+						discountCalc := model.NewDiscountCalculator(campaigns)
+
+						discount := discountCalc.Calculate(maxDiscountApplied, user, product)
+
+						Ω(discount.Value).Should(Equal(int64(1500)))
+						Ω(discount.Percent).Should(Equal(maxDiscountApplied))
 					})
 				})
 			})
@@ -234,12 +272,12 @@ var _ = Describe("discount test", func() {
 
 					user := model.NewUser(userUID, &now)
 
-					discount := model.NewDiscount(campaigns)
+					discountCalc := model.NewDiscountCalculator(campaigns)
 
-					discount.Calculate(maxDiscount, user, product)
+					discount := discountCalc.Calculate(maxDiscount, user, product)
 
 					Ω(discount.Value).Should(Equal(int64(500)))
-					Ω(discount.Percentage).Should(Equal(birthdayPercent))
+					Ω(discount.Percent).Should(Equal(birthdayPercent))
 				})
 
 				Context("and max discount is 15%", func() {
@@ -253,12 +291,12 @@ var _ = Describe("discount test", func() {
 
 						user := model.NewUser(userUID, &now)
 
-						discount := model.NewDiscount(campaigns)
+						discountCalc := model.NewDiscountCalculator(campaigns)
 
-						discount.Calculate(maxDiscountApplied, user, product)
+						discount := discountCalc.Calculate(maxDiscountApplied, user, product)
 
 						Ω(discount.Value).Should(Equal(int64(500)))
-						Ω(discount.Percentage).Should(Equal(birthdayPercent))
+						Ω(discount.Percent).Should(Equal(birthdayPercent))
 					})
 				})
 			})
@@ -275,12 +313,12 @@ var _ = Describe("discount test", func() {
 						newNotImplementedCampaign(true),
 					}
 
-					discount := model.NewDiscount(campaigns)
+					discountCalc := model.NewDiscountCalculator(campaigns)
 
-					discount.Calculate(maxDiscount, user, product)
+					discount := discountCalc.Calculate(maxDiscount, user, product)
 
 					Ω(discount.Value).Should(Equal(int64(0)))
-					Ω(discount.Percentage).Should(Equal(int32(0)))
+					Ω(discount.Percent).Should(Equal(int32(0)))
 				})
 			})
 
@@ -292,12 +330,12 @@ var _ = Describe("discount test", func() {
 						newBlackFridayCampaign(true, &tomorrow),
 					}
 
-					discount := model.NewDiscount(campaigns)
+					discountCalc := model.NewDiscountCalculator(campaigns)
 
-					discount.Calculate(maxDiscount, user, product)
+					discount := discountCalc.Calculate(maxDiscount, user, product)
 
 					Ω(discount.Value).Should(Equal(int64(0)))
-					Ω(discount.Percentage).Should(Equal(int32(0)))
+					Ω(discount.Percent).Should(Equal(int32(0)))
 				})
 			})
 		})

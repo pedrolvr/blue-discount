@@ -30,7 +30,7 @@ var _ = Describe("campaign repo", func() {
 	})
 
 	It("FindByActive()", func() {
-		mock.ExpectQuery(`SELECT (.+) FROM "campaign" (.+) ORDER BY order ASC`).
+		mock.ExpectQuery(`SELECT (.+) FROM "campaign" (.+) ORDER BY priority ASC`).
 			WillReturnRows(
 				sqlmock.NewRows([]string{"name"}).AddRow(model.BirthdayCampaignName),
 			)

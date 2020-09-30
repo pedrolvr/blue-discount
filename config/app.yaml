@@ -1,3 +1,6 @@
+service:
+  port: 7777
+
 discount:
   max_applied: 10 # percent
   

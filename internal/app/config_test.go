@@ -16,27 +16,25 @@ var _ = Describe("config", func() {
 			Context("and the path is correct", func() {
 				It("should get a right config object", func() {
 					c, err := app.ReadConfig("app", configPath)
+
+					Ω(err).Should(BeNil())
 					Ω(c.Discount.MaxApplied).Should(Equal(int32(10)))
 					Ω(c.DB.Host).Should(Equal("localhost"))
-					Ω(err).Should(BeNil())
 				})
 			})
 
 			Context("and the config file is invalid", func() {
 				It("should get a right config object", func() {
 					_, err := app.ReadConfig("invalid-file", configPath)
-					Ω(err.Error()).Should(ContainSubstring("error config file"))
+					Ω(err).Should(HaveOccurred())
 				})
 			})
 
 			Context("and the config file is invalid", func() {
 				It("should get a right config object", func() {
 					os.Setenv("DISCOUNT.MAX_APPLIED", "false")
-
 					_, err := app.ReadConfig("app", configPath)
-
-					Ω(err).ShouldNot(BeNil())
-					Ω(err.Error()).Should(ContainSubstring("unable to decode config"))
+					Ω(err).Should(HaveOccurred())
 				})
 			})
 		})
