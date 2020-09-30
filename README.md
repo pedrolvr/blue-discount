@@ -5,11 +5,13 @@ The project uses the following packages and tools:
 
 - [Docker](https://www.docker.com/)
 - [Kubernetes](https://kubernetes.io/)
+- [Kustomize](https://kustomize.io/)
 - [Tilt](https://tilt.dev/) (development)
 - [Gingko](https://github.com/onsi/ginkgo) (BDD for Go)
 - [Gomega](https://github.com/onsi/gomega)
 - [Gorm](https://gorm.io/index.html)
 - [Viper](https://github.com/spf13/viper)
+- [Go GRPC](https://github.com/grpc/grpc-go)
 
 ## Running locally
 
@@ -33,7 +35,7 @@ To run the project:
 $ tilt up
 ```
 
-After that, you can access the service on http://localhost:8000.
+After that, you can use a tool, such as [BloomRPC](https://github.com/uw-labs/bloomrpc), to make rpc calls on http://localhost:8000 or get the metrics on http://localhost:8083/metrics.
 
 ## Testing
 
