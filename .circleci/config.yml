@@ -9,6 +9,8 @@ commands:
     description: "Bootstrap actions"
     steps:
       - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
       - run:
           name: get all dependencies
           command: |
